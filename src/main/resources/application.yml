@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: TeamCloud
+
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+aws:
+  accessKey: accesskey
+  secretKey: secretkey
+  region: ap-northeast-2
+
+  dynamodb:
+    endpoint: http://localhost:8000
+
+
+
