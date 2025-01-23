@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.Profile;
 
 @Configuration
 public class DynamoDBConfiguration {
@@ -27,6 +28,8 @@ public class DynamoDBConfiguration {
     @Value("${aws.secretKey}")
     private String secretKey;
 
+    private AmazonDynamoDB amazonDynamoDB;
+
     @Bean
     @Primary
     public DynamoDBMapper dynamoDBMapper() {
@@ -38,22 +41,32 @@ public class DynamoDBConfiguration {
 //                .build();
         DynamoDBMapperConfig mapperConfig = DynamoDBMapperConfig.DEFAULT;
 
-        return new DynamoDBMapper(amazonDynamoDB(), mapperConfig);
+        return new DynamoDBMapper(amazonDynamoDB, mapperConfig);
     }
 
     @Primary
-    @Bean
     public AWSCredentialsProvider awsCredentialsProvider() {
-        return new AWSStaticCredentialsProvider(new BasicAWSCredentials(accessKey,secretKey));
+        return new AWSStaticCredentialsProvider(new BasicAWSCredentials(accessKey, secretKey));
     }
 
-    @Bean
-    public AmazonDynamoDB amazonDynamoDB() {
+    @Bean("amazonDynamoDB")
+    @Profile("local")
+    public AmazonDynamoDB amazonLocalDynamoDB() {
         return AmazonDynamoDBClientBuilder
                 .standard()
                 .withEndpointConfiguration(
                         new AwsClientBuilder.EndpointConfiguration(endPoint, region)
                 )
+                .withCredentials(awsCredentialsProvider())
+                .build();
+    }
+
+    @Bean("amazonDynamoDB")
+    @Profile("prod")
+    public AmazonDynamoDB amazonProdDynamoDB() {
+        return AmazonDynamoDBClientBuilder
+                .standard()
+                .withRegion(region)
                 .withCredentials(awsCredentialsProvider())
                 .build();
     }
