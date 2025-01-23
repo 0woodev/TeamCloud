@@ -1,3 +1,4 @@
+#
 spring:
   profiles:
     group:
@@ -22,6 +23,7 @@ spring:
 ---
 
 spring:
+  # https://kim-oriental.tistory.com/50 참고
   # application-dynamodb-prod.yml 을 active profile 이 prod 일 때 사용하도록 설정
   config:
     activate:
