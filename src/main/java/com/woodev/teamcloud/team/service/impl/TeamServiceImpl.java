@@ -33,7 +33,7 @@ public class TeamServiceImpl implements TeamService {
 
     @Override
     public List<Team> getTeamsByName(String teamName) {
-        return teamRepository.findByNameContaining(teamName);
+        return teamRepository.findByName(teamName);
     }
 
     @Override
@@ -45,6 +45,4 @@ public class TeamServiceImpl implements TeamService {
     public String updateTeam(Team team) {
         return null;
     }
-
-
 }

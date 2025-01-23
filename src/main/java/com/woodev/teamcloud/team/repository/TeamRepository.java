@@ -8,7 +8,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-@EnableScan()
+@EnableScan
 public interface TeamRepository extends CrudRepository<Team, UUID> {
     List<Team> findByNameContaining(String name);
+
+    // GSI entityName-id-index 를 사용하여 조회
+    List<Team> findByName(String name);
 }
