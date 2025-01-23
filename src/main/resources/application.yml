@@ -1,17 +1,37 @@
 spring:
+  profiles:
+    group:
+      prod: dynamodb-prod, common
+      local: dynamodb-local, common
+      development: development, common
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: "common"
+
   application:
     name: TeamCloud
 
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
-aws:
-  accessKey: accesskey
-  secretKey: secretkey
-  region: ap-northeast-2
 
-  dynamodb:
-    endpoint: http://localhost:8000
+---
 
+spring:
+  # application-dynamodb-prod.yml 을 active profile 이 prod 일 때 사용하도록 설정
+  config:
+    activate:
+      on-profile: "dynamodb-prod"
+    import: classpath:application-dynamodb-prod.yml
 
+---
 
+spring:
+  config:
+    activate:
+      on-profile: "dynamodb-local"
+    import: classpath:application-dynamodb-local.yml

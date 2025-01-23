@@ -1,0 +1,8 @@
+aws:
+  accessKey: ${AWS_PERSONAL_ACCESS_KEY}
+  secretKey: ${AWS_PERSONAL_SECRET_KEY}
+  region: ap-northeast-2
+
+  dynamodb:
+    endpoint: http://localhost:8000
+    # arn:aws:dynamodb:ap-northeast-2:708943214554
