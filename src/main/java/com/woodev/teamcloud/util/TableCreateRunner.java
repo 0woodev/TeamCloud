@@ -4,6 +4,7 @@ import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.model.*;
 import com.amazonaws.services.dynamodbv2.util.TableUtils;
+import com.woodev.teamcloud.prompt.domain.Prompt;
 import com.woodev.teamcloud.team.domain.Team;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -30,8 +31,15 @@ public class TableCreateRunner implements CommandLineRunner {
 
         CreateTableRequest teamTableRequest = dynamoDBMapper
                 .generateCreateTableRequest(Team.class);
+        CreateTableRequest promptTableRequest = dynamoDBMapper
+                .generateCreateTableRequest(Prompt.class);
+
+
         teamTableRequest.setProvisionedThroughput(
                 new ProvisionedThroughput(1L, 1L));
+        promptTableRequest.setProvisionedThroughput(
+                new ProvisionedThroughput(1L, 1L));
+
 
         // GSI 추가
         GlobalSecondaryIndex entityNameIdIndex = new GlobalSecondaryIndex()
@@ -42,19 +50,24 @@ public class TableCreateRunner implements CommandLineRunner {
                         new KeySchemaElement("entityName", KeyType.HASH),
                         new KeySchemaElement("id", KeyType.RANGE)
                 );
+        // GSI 추가
 
         teamTableRequest.setGlobalSecondaryIndexes(List.of(entityNameIdIndex));
+        promptTableRequest.setGlobalSecondaryIndexes(List.of(entityNameIdIndex));
 //        CreateTableRequest musicCollectionTableRequest = dynamoDBMapper
 //                .generateCreateTableRequest(MusicCollection.class);
 //        musicCollectionTableRequest.setProvisionedThroughput(
 //                new ProvisionedThroughput(1L, 1L));
 
         TableUtils.createTableIfNotExists(amazonDynamoDB, teamTableRequest);
+        TableUtils.createTableIfNotExists(amazonDynamoDB, promptTableRequest);
     }
 
     void deleteTable() {
-        DeleteTableRequest customerTableRequest = dynamoDBMapper.generateDeleteTableRequest(Team.class);
-        TableUtils.deleteTableIfExists(amazonDynamoDB, customerTableRequest);
+        DeleteTableRequest teamTableRequest = dynamoDBMapper.generateDeleteTableRequest(Team.class);
+        DeleteTableRequest promptTableRequest = dynamoDBMapper.generateDeleteTableRequest(Prompt.class);
+        TableUtils.deleteTableIfExists(amazonDynamoDB, teamTableRequest);
+        TableUtils.deleteTableIfExists(amazonDynamoDB, promptTableRequest);
     }
 
     @Override
