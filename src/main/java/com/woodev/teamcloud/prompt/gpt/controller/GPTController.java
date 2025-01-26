@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -45,5 +46,34 @@ public class GPTController {
     @PostMapping("/apikey")
     public GPTAPIKey saveGPTAPIKey(@RequestBody SaveGPTAPIKeyRequestDTO request) {
         return GPTService.saveGPTAPIKey(request);
+    }
+
+    @PostMapping("/req")
+    public String requestPrompt(
+            @PathVariable("id") String promptName,
+            @RequestBody Map<String, Object> request
+        ) {
+        // Make requestID(UUID) and save it to the dynamoDB
+
+        // Get API Key from dynamoDB
+        // Get Prompt from dynamoDB
+
+
+        // Call GPT API with the request and API Key
+        // TODO GPT API 는 응답을 대기하지 않고, 메세지큐에서 응답을 받아오도록 수정해야함
+        // 1. Mapping Prompt and requestBody
+        // 2. Call GPT API
+        // 3. Save the response to the dynamoDB
+
+        // return UUID;
+        return null;
+    }
+
+    @GetMapping("/res/{requestId}")
+    public String getGPTResponse(@PathVariable("requestId") String requestId) {
+        // Get the response from dynamoDB
+
+        // return response;
+        return null;
     }
 }
