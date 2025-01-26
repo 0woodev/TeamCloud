@@ -4,7 +4,7 @@ import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.model.*;
 import com.amazonaws.services.dynamodbv2.util.TableUtils;
-import com.woodev.teamcloud.prompt.domain.Prompt;
+import com.woodev.teamcloud.prompt.gpt.domain.LatestPrompt;
 import com.woodev.teamcloud.team.domain.Team;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -32,7 +32,7 @@ public class TableCreateRunner implements CommandLineRunner {
         CreateTableRequest teamTableRequest = dynamoDBMapper
                 .generateCreateTableRequest(Team.class);
         CreateTableRequest promptTableRequest = dynamoDBMapper
-                .generateCreateTableRequest(Prompt.class);
+                .generateCreateTableRequest(LatestPrompt.class);
 
 
         teamTableRequest.setProvisionedThroughput(
@@ -51,9 +51,17 @@ public class TableCreateRunner implements CommandLineRunner {
                         new KeySchemaElement("id", KeyType.RANGE)
                 );
         // GSI 추가
+        GlobalSecondaryIndex promptNamePromptVersionIndex = new GlobalSecondaryIndex()
+                .withIndexName("promptNamePromptVersionIndex")
+                .withProvisionedThroughput(new ProvisionedThroughput(1L, 1L))
+                .withProjection(new Projection().withProjectionType(ProjectionType.ALL))
+                .withKeySchema(
+                        new KeySchemaElement("promptName", KeyType.HASH),
+                        new KeySchemaElement("promptVersion", KeyType.RANGE)
+                );
 
         teamTableRequest.setGlobalSecondaryIndexes(List.of(entityNameIdIndex));
-        promptTableRequest.setGlobalSecondaryIndexes(List.of(entityNameIdIndex));
+        promptTableRequest.setGlobalSecondaryIndexes(List.of(entityNameIdIndex, promptNamePromptVersionIndex));
 //        CreateTableRequest musicCollectionTableRequest = dynamoDBMapper
 //                .generateCreateTableRequest(MusicCollection.class);
 //        musicCollectionTableRequest.setProvisionedThroughput(
@@ -65,7 +73,7 @@ public class TableCreateRunner implements CommandLineRunner {
 
     void deleteTable() {
         DeleteTableRequest teamTableRequest = dynamoDBMapper.generateDeleteTableRequest(Team.class);
-        DeleteTableRequest promptTableRequest = dynamoDBMapper.generateDeleteTableRequest(Prompt.class);
+        DeleteTableRequest promptTableRequest = dynamoDBMapper.generateDeleteTableRequest(LatestPrompt.class);
         TableUtils.deleteTableIfExists(amazonDynamoDB, teamTableRequest);
         TableUtils.deleteTableIfExists(amazonDynamoDB, promptTableRequest);
     }
@@ -73,7 +81,15 @@ public class TableCreateRunner implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         try {
-//            deleteTable();
+//            deleteTable();  //
+            char whatisthis = ' ';
+            char space = ' ';
+
+            // whatisthis 의 ascii code 를 알고싶어
+            // space 랑 같은지 알고싶어
+            System.out.println((int)whatisthis);
+            System.out.println(whatisthis == space);
+
             createTable();
         } catch (Exception e) {
             e.printStackTrace();
