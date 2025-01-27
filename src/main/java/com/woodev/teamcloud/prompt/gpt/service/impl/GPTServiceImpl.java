@@ -1,11 +1,13 @@
 package com.woodev.teamcloud.prompt.gpt.service.impl;
 
 import com.woodev.teamcloud.prompt.gpt.domain.GPTAPIKey;
+import com.woodev.teamcloud.prompt.gpt.domain.LatestPrompt;
 import com.woodev.teamcloud.prompt.gpt.domain.VersioningPrompt;
 import com.woodev.teamcloud.prompt.gpt.repository.GPTAPIKeyRepository;
-import com.woodev.teamcloud.prompt.gpt.request.SaveGPTAPIKeyRequestDTO;
-import com.woodev.teamcloud.prompt.gpt.request.SavePromptRequestDTO;
-import com.woodev.teamcloud.prompt.gpt.repository.PromptRepository;
+import com.woodev.teamcloud.prompt.gpt.dto.request.SaveGPTAPIKeyRequestDTO;
+import com.woodev.teamcloud.prompt.gpt.dto.request.SavePromptRequestDTO;
+import com.woodev.teamcloud.prompt.gpt.repository.LatestPromptRepository;
+import com.woodev.teamcloud.prompt.gpt.repository.VersioningPromptRepository;
 import com.woodev.teamcloud.prompt.gpt.service.GPTService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,28 +19,39 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class GPTServiceImpl implements GPTService {
 
-    private final PromptRepository promptRepository;
+    private final VersioningPromptRepository versioningPromptRepository;
+    private final LatestPromptRepository latestPromptRepository;
     private final GPTAPIKeyRepository gptAPIKeyRepository;
 
     @Override
     public VersioningPrompt savePrompt(SavePromptRequestDTO request) {
         VersioningPrompt versioningPrompt = request.toVersioningPrompt();
-        return promptRepository.save(versioningPrompt);
+        return versioningPromptRepository.save(versioningPrompt);
     }
 
     @Override
     public VersioningPrompt getPromptById(UUID promptId) {
-        return promptRepository.findById(promptId).orElse(null);
+        return versioningPromptRepository.findById(promptId).orElse(null);
     }
 
     @Override
-    public List<VersioningPrompt> getPrompts() {
-        return (List<VersioningPrompt>) promptRepository.findAll();
+    public List<VersioningPrompt> getAllPrompts() {
+        return (List<VersioningPrompt>) versioningPromptRepository.findAll();
     }
 
     @Override
-    public List<VersioningPrompt> getPromptsByPromptName(String promptName) {
-        return promptRepository.findAllByPromptName(promptName);
+    public List<VersioningPrompt> getAllPromptsByPromptName(String promptName) {
+        return versioningPromptRepository.findAllByPromptName(promptName);
+    }
+
+    @Override
+    public VersioningPrompt getPromptByPromptNameAndVersion(String promptName, String version) {
+        return versioningPromptRepository.findByPromptNameAndPromptVersion(promptName, version);
+    }
+
+    @Override
+    public LatestPrompt getLatestPrompt(String promptName) {
+        return latestPromptRepository.findFirstByPromptNameAndPromptVersion(promptName, "LATEST");
     }
 
     @Override

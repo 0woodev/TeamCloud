@@ -14,12 +14,11 @@ public class RestTemplateForGPT {
 
     public RestTemplateForGPT(GPTService gptService) {
         RestTemplateBuilder builder = new RestTemplateBuilder();
-        this.restTemplate = builder
-                .rootUri("https://api.openai.com/v1/chat/completions")
-                .defaultHeader("Content-Type", "application/json")
-                .defaultHeader("Authorization", "Bearer " + gptService.getApiKey().getKey())
-                .build();
-
         this.gptService = gptService;
+        this.restTemplate = builder
+                .rootUri("https://api.openai.com")
+                .defaultHeader("Content-Type", "application/json")
+                .defaultHeader("Authorization", "Bearer " + this.gptService.getApiKey().getKey())
+                .build();
     }
 }

@@ -1,4 +1,4 @@
-package com.woodev.teamcloud.prompt.gpt.request;
+package com.woodev.teamcloud.prompt.gpt.dto.request;
 
 
 // PromptController.savePrompt() 의 request body dto 를 정의합니다.
